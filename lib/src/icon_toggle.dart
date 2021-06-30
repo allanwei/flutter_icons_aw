@@ -34,8 +34,8 @@ class IconToggle extends StatefulWidget {
 
 class _IconToggleState extends State<IconToggle>
     with SingleTickerProviderStateMixin {
-  late AnimationController? _controller;
-  late Animation<double> _position;
+  AnimationController? _controller;
+  Animation<double>? _position;
   bool _cancel = false;
 
   @override
@@ -46,7 +46,7 @@ class _IconToggleState extends State<IconToggle>
         duration: Duration(milliseconds: 100),
         reverseDuration: Duration(milliseconds: 50));
     _position = CurvedAnimation(parent: _controller!, curve: Curves.linear);
-    _position.addStatusListener((status) {
+    _position!.addStatusListener((status) {
       if (status == AnimationStatus.dismissed &&
           widget.onChanged != null &&
           _cancel == false) {
@@ -79,7 +79,7 @@ class _IconToggleState extends State<IconToggle>
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: _IconToggleable<double>(
-          listenable: _position,
+          listenable: _position!,
           activeColor: widget.activeColor,
           inactiveColor: widget.inactiveColor,
           child: AnimatedSwitcher(
@@ -116,8 +116,8 @@ class _IconToggleable<T> extends AnimatedWidget {
     return CustomPaint(
       painter: _IconPainter(
         position: listenable as Animation<double>,
-        activeColor: activeColor!,
-        inactiveColor: inactiveColor!,
+        activeColor: activeColor,
+        inactiveColor: inactiveColor,
       ),
       child: child,
     );
@@ -126,15 +126,15 @@ class _IconToggleable<T> extends AnimatedWidget {
 
 class _IconPainter extends CustomPainter {
   _IconPainter({
-    this.position,
+    required this.position,
     this.activeColor,
     this.inactiveColor,
   });
-  final Animation<double>? position;
+  final Animation<double> position;
   final Color? activeColor;
   final Color? inactiveColor;
 
-  double get _value => position != null ? position!.value : 0;
+  double get _value => position.value;
 
   @override
   void paint(Canvas canvas, Size size) {
